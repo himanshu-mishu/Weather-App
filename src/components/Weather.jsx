@@ -71,12 +71,13 @@ const Weather = () => {
           onChange={(e) => setCity(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && city && search(city)}
         />
-        <img
-          src={searchIcon}
-          alt="Search"
-          onClick={() => city && search(city)}
-          style={{ cursor: "pointer" }}
-        />
+        <button
+  type="button"
+  className="search-btn"
+  onClick={() => city && search(city)}
+>
+  <img src={searchIcon} alt="Search" />
+</button>
       </div>
 
       {weatherData && (
