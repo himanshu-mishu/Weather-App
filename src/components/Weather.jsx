@@ -10,16 +10,53 @@ import drizzleIcon from "../assets/drizzle.png";
 import snowIcon from "../assets/snow.png";
 
 const Weather = () => {
-  const search = async (city) => {
+  const [city, setCity] = useState("");
+  const [weatherData, setWeatherData] = useState(false);
+
+  const allIcon = {
+    "01d": clearIcon,
+    "01n": clearIcon,
+    "02d": cloudIcon,
+    "02n": cloudIcon,
+    "03d": drizzleIcon,
+    "03n": drizzleIcon,
+    "04d": cloudIcon,
+    "04n": cloudIcon,
+    "09d": rainIcon,
+    "09n": rainIcon,
+    "10d": rainIcon,
+    "10n": rainIcon,
+    "11d": rainIcon,
+    "11n": rainIcon,
+    "13d": snowIcon,
+    "13n": snowIcon,
+    "50d": cloudIcon,
+    "50n": cloudIcon,
+  };
+
+  const search = async (cityName) => {
     try {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${import.meta.env.VITE_APP_ID}`;
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${import.meta.env.VITE_APP_ID}`;
       const res = await fetch(url);
       const data = await res.json();
-      console.log(data);
+
+      if (!res.ok) {
+        alert("City not found");
+        return;
+      }
+
+      setWeatherData({
+        humidity: data.main.humidity,
+        windSpeed: data.wind.speed,
+        temperature: Math.floor(data.main.temp),
+        location: data.name,
+        icon: allIcon[data.weather[0].icon] || clearIcon,
+      });
     } catch (error) {
-      console.log("error");
+      console.error(error);
     }
   };
+
   useEffect(() => {
     search("London");
   }, []);
@@ -27,29 +64,51 @@ const Weather = () => {
   return (
     <div className="weather">
       <div className="searchbar">
-        <input type="text" placeholder="Enter city name..." />
-        <img src={searchIcon} alt="Search" />
+        <input
+          type="text"
+          placeholder="Enter city name..."
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && city && search(city)}
+        />
+        <img
+          src={searchIcon}
+          alt="Search"
+          onClick={() => city && search(city)}
+          style={{ cursor: "pointer" }}
+        />
       </div>
-      <img src={clearIcon} alt="Weather Icon" className="weather-icon" />
-      <p className="temperature">25°C</p>
-      <p className="location">New York</p>
-      <div className="weather-data">
-        <div className="col">
-          <img src={humidityIcon} alt="Humidity" />
-          <div>
-            <p>60%</p>
-            <span>Humidity</span>
-          </div>
 
-          <div className="col">
-            <img src={windIcon} alt="Wind Speed" />
-            <div>
-              <p>3.6 km/hr</p>
-              <span>wind speed</span>
+      {weatherData && (
+        <>
+          <img
+            src={weatherData.icon}
+            alt="Weather Icon"
+            className="weather-icon"
+          />
+
+          <p className="temperature">{weatherData.temperature}°C</p>
+          <p className="location">{weatherData.location}</p>
+
+          <div className="weather-data">
+            <div className="col">
+              <img src={humidityIcon} alt="Humidity" />
+              <div>
+                <p>{weatherData.humidity}%</p>
+                <span>Humidity</span>
+              </div>
+            </div>
+
+            <div className="col">
+              <img src={windIcon} alt="Wind Speed" />
+              <div>
+                <p>{weatherData.windSpeed} km/hr</p>
+                <span>Wind Speed</span>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
