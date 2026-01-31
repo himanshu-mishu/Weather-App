@@ -33,10 +33,14 @@ const Weather = () => {
     "50d": cloudIcon,
     "50n": cloudIcon,
   };
+  
+  console.log(city);
 
   const search = async (cityName) => {
+    console.log("searching");
     try {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${import.meta.env.VITE_APP_ID}`;
+      console.log(url);
       const res = await fetch(url);
       const data = await res.json();
 
@@ -53,6 +57,7 @@ const Weather = () => {
         icon: allIcon[data.weather[0].icon] || clearIcon,
       });
     } catch (error) {
+      // throw new Error("Failed to fetch weather data");
       console.error(error);
     }
   };
@@ -72,12 +77,14 @@ const Weather = () => {
           onKeyDown={(e) => e.key === "Enter" && city && search(city)}
         />
         <button
-  type="button"
-  className="search-btn"
-  onClick={() => city && search(city)}
->
-  <img src={searchIcon} alt="Search" />
-</button>
+          type="button"
+          className="search-btn"
+          onClick={() => {
+            console.log("clicked");
+            city && search(city)}}
+        >
+          <img src={searchIcon} alt="Search" />
+        </button>
       </div>
 
       {weatherData && (
