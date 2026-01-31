@@ -34,13 +34,10 @@ const Weather = () => {
     "50n": cloudIcon,
   };
   
-  console.log(city);
-
   const search = async (cityName) => {
-    console.log("searching");
+
     try {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${import.meta.env.VITE_APP_ID}`;
-      console.log(url);
       const res = await fetch(url);
       const data = await res.json();
 
@@ -79,9 +76,8 @@ const Weather = () => {
         <button
           type="button"
           className="search-btn"
-          onClick={() => {
-            console.log("clicked");
-            city && search(city)}}
+          onClick={() => 
+            city && search(city)}
         >
           <img src={searchIcon} alt="Search" />
         </button>
